@@ -32,10 +32,6 @@ pub extern "C" fn _start() -> ! {
 
     os::init();
 
-    // Trigger a page fault
-    unsafe {
-        *(0xdeadbeef as *mut u8) = 42;
-    };
 
     // Unit tests
     #[cfg(test)]

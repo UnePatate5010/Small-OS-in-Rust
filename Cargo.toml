@@ -22,3 +22,7 @@ test-timeout = 60   # Exits if tests take longer than 60 seconds
 [[test]]
 name = "should_panic"
 harness = false
+
+[[test]]
+name = "stack_overflow"
+harness = false
