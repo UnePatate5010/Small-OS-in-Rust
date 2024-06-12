@@ -1,0 +1,24 @@
+[package]
+name = "os"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bootloader = "0.9"
+volatile = "0.2.6"      # Volatile for WRITER
+lazy_static = { version = "1.0", features = ["spin_no_std"] }
+spin = "0.5.2"      # spinlock for WRITER
+x86_64 = "0.14.2"
+uart_16550 = "0.2.0"    # To return information upon exiting tests
+
+# Enable exit option for QEMU (shut down the OS)
+[package.metadata.bootimage]
+test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", "-serial", "stdio", "-display", "none"]
+test-success-exit-code = 33     # (0x10 << 1) | 1 -> Makes cargo understand that QEMU exited with a success code
+test-timeout = 60   # Exits if tests take longer than 60 seconds
+
+[[test]]
+name = "should_panic"
+harness = false
