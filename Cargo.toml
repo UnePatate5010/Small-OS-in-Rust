@@ -10,8 +10,10 @@ bootloader = "0.9"
 volatile = "0.2.6"      # Volatile for WRITER
 lazy_static = { version = "1.0", features = ["spin_no_std"] }
 spin = "0.5.2"      # spinlock for WRITER
-x86_64 = "0.14.2"
+x86_64 = "0.14.2"   # x86_64 architecture
 uart_16550 = "0.2.0"    # To return information upon exiting tests
+pic8259 = "0.10.1"  # PIC for hardware interruptions
+pc-keyboard = "0.7.0"   # Scancodes and reads pressed keys
 
 # Enable exit option for QEMU (shut down the OS)
 [package.metadata.bootimage]

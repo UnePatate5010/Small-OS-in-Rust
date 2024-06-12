@@ -18,10 +18,7 @@ pub trait Testable {
     fn run(&self) -> ();
 }
 
-impl<T> Testable for T
-where
-    T: Fn(),
-{
+impl<T> Testable for T where T: Fn() {
     fn run(&self) {
         serial_print!("{}...\t", core::any::type_name::<T>());
         self();
@@ -41,7 +38,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
-    loop {}
+    hlt_loop();
 }
 
 /// Entry point for `cargo test`
@@ -50,7 +47,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     init();
     test_main();
-    loop {}
+    hlt_loop();
 }
 
 #[cfg(test)]
@@ -58,7 +55,6 @@ pub extern "C" fn _start() -> ! {
 fn panic(info: &PanicInfo) -> ! {
     test_panic_handler(info)
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
@@ -77,6 +73,16 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 }
 
 pub fn init() {
-    gdt::init();
-    interrupts::init_idt();
+    gdt::init(); // init GDT
+    interrupts::init_idt(); // Init interrupts
+    unsafe {
+        interrupts::PICS.lock().initialize();
+    } // hardware interrupts
+    x86_64::instructions::interrupts::enable(); // enable hardware interrupts
+}
+
+pub fn hlt_loop() -> ! {
+    loop {
+        x86_64::instructions::hlt();
+    }
 }

@@ -14,7 +14,7 @@ use os::println;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    os::hlt_loop();
 }
 
 // Called when testing
@@ -24,7 +24,6 @@ fn panic(info: &PanicInfo) -> ! {
     os::test_panic_handler(info)
 }
 
-
 // Entry point function to the OS (name '_start' by default)
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
@@ -32,12 +31,11 @@ pub extern "C" fn _start() -> ! {
 
     os::init();
 
-
     // Unit tests
     #[cfg(test)]
     test_main();
 
     println!("It did not crash!");
 
-    loop {}
+    os::hlt_loop();
 }
